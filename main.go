@@ -43,11 +43,11 @@ func Unmarshal(src string, dst *map[string]any) error {
 }
 
 func parseObject(src string) (map[string]any, error) {
-	m := make(map[string]any)
 	if src[0] == '}' {
+		m := make(map[string]any)
 		return m, nil
 	}
 
-	m = map[string]any{"name": "taro"}
+	m := map[string]any{"name": "taro"}
 	return m, nil
 }
