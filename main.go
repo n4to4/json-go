@@ -15,14 +15,19 @@ func main() {
 	for _, j := range birdJson {
 		fmt.Printf("\ninput: %q\n", j)
 
-		var bird map[string]any
-		if err := json.Unmarshal([]byte(j), &bird); err != nil {
+		var obj map[string]any
+		if err := json.Unmarshal([]byte(j), &obj); err != nil {
 			fmt.Printf("error: %s", err)
 			continue
 		}
 
-		fmt.Printf("%#v\n", bird)
-		fmt.Printf("%#v\n", bird["birdType"])
-		fmt.Printf("%#v\n", bird["birdtype"])
+		fmt.Printf("%#v\n", obj)
+		fmt.Printf("%#v\n", obj["birdType"])
+		fmt.Printf("%#v\n", obj["birdtype"])
 	}
+}
+
+func Unmarshal(src string, dst *map[string]any) error {
+	*dst = make(map[string]any)
+	return nil
 }
