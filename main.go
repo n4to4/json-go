@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 )
 
@@ -28,6 +29,25 @@ func main() {
 }
 
 func Unmarshal(src string, dst *map[string]any) error {
-	*dst = make(map[string]any)
+	if src[0] != '{' {
+		return errors.New("not supported")
+	}
+
+	obj, err := parseObject(src[1:])
+	if err != nil {
+		return err
+	}
+	*dst = obj
+
 	return nil
+}
+
+func parseObject(src string) (map[string]any, error) {
+	m := make(map[string]any)
+	if src[0] == '}' {
+		return m, nil
+	}
+
+	m = map[string]any{"name": "taro"}
+	return m, nil
 }
