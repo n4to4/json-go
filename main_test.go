@@ -39,7 +39,7 @@ func TestParseObject(t *testing.T) {
 				t.Fail()
 			}
 			if !reflect.DeepEqual(tt.want, obj2) {
-				t.Errorf("Unmarshal: want %#v, got %#v", tt.want, obj)
+				t.Errorf("Unmarshal: want %#v, got %#v", tt.want, obj2)
 			}
 		})
 	}
