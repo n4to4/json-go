@@ -54,6 +54,20 @@ func (u *Unmarshaler) next() {
 	u.cur += 1
 }
 
+func (u *Unmarshaler) nextN(c int) {
+	u.cur += c
+}
+
+func (u *Unmarshaler) expect(w string) bool {
+	len := len(w)
+	if u.src[u.cur:u.cur+len] == w {
+		u.nextN(len)
+		return true
+	} else {
+		return false
+	}
+}
+
 func (u *Unmarshaler) UnmarshalObject() error {
 	c, ok := u.currentChar()
 	if !ok {
@@ -87,7 +101,7 @@ func (u *Unmarshaler) parseObject() (map[string]any, error) {
 		case '"':
 			u.next()
 			s, err := u.parseString()
-			fmt.Printf("string %q, %d\n", s, u.cur)
+			// fmt.Printf("string %q, %d\n", s, u.cur)
 			if err != nil {
 				return nil, err
 			}
@@ -104,9 +118,40 @@ func (u *Unmarshaler) parseObject() (map[string]any, error) {
 			}
 			u.next()
 		case ',':
+			if seenKey {
+				return nil, errors.New("found `,` while expecting value")
+			}
 			u.next()
 		case ' ', '\t':
 			u.next()
+		default:
+			if !seenKey {
+				return nil, errors.New("invalid syntax")
+			}
+			// fmt.Printf("next: %q\n", u.src[u.cur:])
+			if u.expect("true") {
+				m[key] = true
+				seenKey = false
+				continue
+			} else if u.expect("false") {
+				m[key] = false
+				seenKey = false
+				continue
+			} else if u.expect("null") {
+				m[key] = nil
+				seenKey = false
+				continue
+			} else if '0' <= c && c <= '9' {
+				n, err := u.parseNumber()
+				if err != nil {
+					return nil, fmt.Errorf("failed to parse number")
+				}
+				m[key] = n
+				seenKey = false
+				continue
+			}
+
+			return nil, errors.New("invalid syntax")
 		}
 	}
 }
@@ -129,4 +174,8 @@ func (u *Unmarshaler) parseString() (string, error) {
 			str = str + string(c)
 		}
 	}
+}
+
+func (u *Unmarshaler) parseNumber() (float64, error) {
+	return 42.0, nil
 }
