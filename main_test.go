@@ -19,8 +19,13 @@ func TestParseObject(t *testing.T) {
 		},
 		{
 			name: "key value",
-			json: `{"name":"taro"}`,
-			want: map[string]any{"name": "taro"},
+			json: `{"name":"taro","pet":"lambda"}`,
+			want: map[string]any{"name": "taro", "pet": "lambda"},
+		},
+		{
+			name: "skip whitespace",
+			json: `{ "name" : "taro"  ,  "pet"  :  "lambda"  }`,
+			want: map[string]any{"name": "taro", "pet": "lambda"},
 		},
 	}
 

@@ -69,14 +69,13 @@ func (u *Unmarshaler) UnmarshalObject() error {
 		return err
 	}
 	*u.dst = obj
-
 	return nil
 }
 
 func (u *Unmarshaler) parseObject() (map[string]any, error) {
 	m := make(map[string]any)
 	var key string
-	haveKey := false
+	seenKey := false
 	for {
 		c, ok := u.currentChar()
 		if !ok {
@@ -88,18 +87,25 @@ func (u *Unmarshaler) parseObject() (map[string]any, error) {
 		case '"':
 			u.next()
 			s, err := u.parseString()
-			// fmt.Printf("case %q, %d\n", s, u.cur)
+			fmt.Printf("string %q, %d\n", s, u.cur)
 			if err != nil {
 				return nil, err
 			}
-			if haveKey {
+			if seenKey {
 				m[key] = s
-				haveKey = false
+				seenKey = false
 			} else {
 				key = s
-				haveKey = true
+				seenKey = true
 			}
 		case ':':
+			if !seenKey {
+				return nil, errors.New("found `:` without key")
+			}
+			u.next()
+		case ',':
+			u.next()
+		case ' ', '\t':
 			u.next()
 		}
 	}
