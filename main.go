@@ -189,8 +189,7 @@ func (u *Unmarshaler) parseNumber() (float64, error) {
 		}
 		if '0' <= c && c <= '9' {
 			u.next()
-			num *= 10
-			num = num + float64(c-'0')
+			num = (10 * num) + float64(c-'0')
 			continue
 		}
 		return num, nil
