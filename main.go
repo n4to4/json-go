@@ -59,9 +59,13 @@ func (u *Unmarshaler) nextN(c int) {
 }
 
 func (u *Unmarshaler) expect(w string) bool {
-	len := len(w)
-	if u.src[u.cur:u.cur+len] == w {
-		u.nextN(len)
+	l := len(w)
+	hi := u.cur + l
+	if hi > len(u.src) {
+		return false
+	}
+	if u.src[u.cur:hi] == w {
+		u.nextN(l)
 		return true
 	} else {
 		return false
@@ -177,5 +181,18 @@ func (u *Unmarshaler) parseString() (string, error) {
 }
 
 func (u *Unmarshaler) parseNumber() (float64, error) {
-	return 42.0, nil
+	num := 0.0
+	for {
+		c, ok := u.currentChar()
+		if !ok {
+			return 0, errors.New("error in parseNumber")
+		}
+		if '0' <= c && c <= '9' {
+			u.next()
+			num *= 10
+			num = num + float64(c-'0')
+			continue
+		}
+		return num, nil
+	}
 }

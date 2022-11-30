@@ -12,21 +12,21 @@ func TestParseObject(t *testing.T) {
 		json string
 		want map[string]any
 	}{
-		//{
-		//	name: "an empty object",
-		//	json: `{}`,
-		//	want: map[string]any{},
-		//},
-		//{
-		//	name: "key value",
-		//	json: `{"name":"taro","pet":"lambda"}`,
-		//	want: map[string]any{"name": "taro", "pet": "lambda"},
-		//},
-		//{
-		//	name: "skip whitespace",
-		//	json: `{ "name" : "taro"  ,  "pet"  :  "lambda"  }`,
-		//	want: map[string]any{"name": "taro", "pet": "lambda"},
-		//},
+		{
+			name: "an empty object",
+			json: `{}`,
+			want: map[string]any{},
+		},
+		{
+			name: "key value",
+			json: `{"name":"taro","pet":"lambda"}`,
+			want: map[string]any{"name": "taro", "pet": "lambda"},
+		},
+		{
+			name: "skip whitespace",
+			json: `{ "name" : "taro"  ,  "pet"  :  "lambda"  }`,
+			want: map[string]any{"name": "taro", "pet": "lambda"},
+		},
 		{
 			name: "boolean",
 			json: `{"true":true,"false":false}`,
@@ -37,11 +37,11 @@ func TestParseObject(t *testing.T) {
 			json: `{"null":null}`,
 			want: map[string]any{"null": nil},
 		},
-		//{
-		//	name: "number",
-		//	json: `{"number":42}`,
-		//	want: map[string]any{"number": 42.0},
-		//},
+		{
+			name: "number",
+			json: `{"number42":42, "number12345":12345}`,
+			want: map[string]any{"number42": 42.0, "number12345": 12345.0},
+		},
 	}
 
 	for _, tt := range tests {
